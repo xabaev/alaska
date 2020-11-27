@@ -25,5 +25,4 @@ public class BaseTest {
             .log(LogDetail.URI)
             .log(LogDetail.BODY)
             .build();
-
 }

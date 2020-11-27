@@ -4,13 +4,13 @@ import io.restassured.response.Response;
 import model.Bear;
 import model.BearType;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static tests.BaseTest.request;
 
 public class Common {
@@ -30,9 +30,8 @@ public class Common {
                 int id = Integer.parseInt(responseBody);
                 bear.setBear_id(id);
             } catch (Exception e) {
-                assertEquals("Response does not contain the database entry number", e.getMessage());
+                Assertions.assertEquals("Response does not contain the database entry number", e.getMessage());
             }
-
             bearList.add(bear);
         }
         return bearList;
@@ -50,7 +49,7 @@ public class Common {
             int id = Integer.parseInt(responseBody);
             bear.setBear_id(id);
         } catch (Exception e) {
-            assertEquals("Response does not contain the database entry number", e.getMessage());
+            Assertions.assertEquals("Response does not contain the database entry number", e.getMessage());
         }
         return bear;
     }

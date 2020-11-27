@@ -47,9 +47,7 @@ public class Bear {
         this.bear_name = bear_name;
     }
 
-    public Integer getBear_id() {
-        return bear_id;
-    }
+    public Integer getBear_id() { return bear_id; }
 
     public void setBear_id(@Nullable Integer bear_id) {
         this.bear_id = bear_id;
