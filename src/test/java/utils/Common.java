@@ -18,17 +18,17 @@ public class Common {
     public static List<Bear> generateBears(int count) {
         List<Bear> bearList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            Random rand = new Random();
-            String bearType = BearType.getRandomType().toString();
+            Random random = new Random();
+            String bearType = BearType.values()[random.nextInt(BearType.values().length)].toString();
             String bearName = RandomStringUtils.randomAlphanumeric(10) + " " + RandomStringUtils.randomAlphanumeric(10);
-            double randomValue = 0 + 100 * rand.nextDouble();
+            double randomValue = 0 + 100 * random.nextDouble();
             Bear bear = new Bear(bearType, bearName, randomValue);
 
             Response response = given().spec(request).body(bear).post("/bear");
             String responseBody = response.getBody().asString();
             try {
                 int id = Integer.parseInt(responseBody);
-                bear.setBear_id(id);
+                bear.setBearId(id);
             } catch (Exception e) {
                 Assertions.assertEquals("Response does not contain the database entry number", e.getMessage());
             }
@@ -47,7 +47,7 @@ public class Common {
         String responseBody = response.getBody().asString();
         try {
             int id = Integer.parseInt(responseBody);
-            bear.setBear_id(id);
+            bear.setBearId(id);
         } catch (Exception e) {
             Assertions.assertEquals("Response does not contain the database entry number", e.getMessage());
         }
