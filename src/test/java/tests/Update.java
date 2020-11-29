@@ -2,6 +2,7 @@ package tests;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import model.Bear;
 import model.BearType;
@@ -21,12 +22,12 @@ public class Update extends BaseTest {
         Bear bearGummy = generateBear(BearType.GUMMY);
 
         //Обновим !GUMMY полями от GUMMY
-        Response responseUpdateBear = given().spec(requestPost).body(bearGummy).put("/bear/" + bearNonGummy.getBearId());
+        Response responseUpdateBear = given().body(bearGummy).contentType(ContentType.JSON).put("/bear/" + bearNonGummy.getBearId());
         responseUpdateBear.then().statusCode(200);
         responseUpdateBear.then().assertThat().body(equalTo("OK"));
 
         //Проверим, что изменилось только имя медведя.
-        Response responseGetBearById = given().spec(request).get("/bear/" + bearNonGummy.getBearId());
+        Response responseGetBearById = given().get("/bear/" + bearNonGummy.getBearId());
         responseGetBearById.then().statusCode(200);
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
 
@@ -46,12 +47,12 @@ public class Update extends BaseTest {
         jsonName.addProperty("bear_name", "test bear NaMe !@#$#%$^&%*^(&)*_(+.,");
 
         //Обновим сгенерированного медведя созданным JSONом
-        Response responseUpdateBear = given().spec(requestPost).body(jsonName.toString()).put("/bear/" + bear.getBearId());
+        Response responseUpdateBear = given().body(jsonName.toString()).put("/bear/" + bear.getBearId());
         responseUpdateBear.then().statusCode(200);
         responseUpdateBear.then().assertThat().body(equalTo("OK"));
 
         //Получим обновленного медведя для сравненения
-        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
+        Response responseGetBearById = given().get("/bear/" + bear.getBearId());
         responseGetBearById.then().statusCode(200);
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
 
@@ -69,12 +70,12 @@ public class Update extends BaseTest {
         Bear bearNonGummy = generateBear(BearType.BLACK);
 
         //Обновим GUMMY данными от !GUMMY
-        Response responseUpdateBear = given().spec(requestPost).body(bearNonGummy).put("/bear/" + bearGummy.getBearId());
+        Response responseUpdateBear = given().body(bearNonGummy).put("/bear/" + bearGummy.getBearId());
         responseUpdateBear.then().statusCode(404);
         responseUpdateBear.then().assertThat().body(equalTo("Not found"));
 
         //Проверим, что данные действительно не обновились
-        Response responseGetBearById = given().spec(request).get("/bear/" + bearGummy.getBearId());
+        Response responseGetBearById = given().get("/bear/" + bearGummy.getBearId());
         responseGetBearById.then().statusCode(200);
         responseGetBearById.then().assertThat().body(equalTo("null"));
     }
@@ -87,12 +88,12 @@ public class Update extends BaseTest {
         Bear updatedBear = generateBear(BearType.BLACK);
 
         //Обновим обычного медведя полями медведя без имени
-        Response response = given().spec(requestPost).body(bearWithoutName).put("/bear/" + updatedBear.getBearId());
+        Response response = given().body(bearWithoutName).put("/bear/" + updatedBear.getBearId());
         response.then().statusCode(500);
         response.then().assertThat().body(equalTo("<html><body><h2>500 Internal Server Error</h2></body></html>"));
 
         //Проврим, что действительно не обновили медведя
-        Response responseGetBearById = given().spec(request).get("/bear/" + updatedBear.getBearId());
+        Response responseGetBearById = given().get("/bear/" + updatedBear.getBearId());
         responseGetBearById.then().statusCode(200);
         updatedBear.setBearName(updatedBear.getBearName().toUpperCase());
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);

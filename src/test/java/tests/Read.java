@@ -22,7 +22,7 @@ public class Read extends BaseTest {
         //Сгенерируем пачку медведей и попытаемся проверить всех
         List<Bear> expectedBears = Common.generateBears(10);
         for (Bear bear : expectedBears) {
-            Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
+            Response responseGetBearById = given().get("/bear/" + bear.getBearId());
             responseGetBearById.then().statusCode(200);
 
             //Если медведь GUMMY, то придет null
@@ -40,10 +40,10 @@ public class Read extends BaseTest {
     @Test
     public void testReadAllBears() {
         //Удалим все текущие данные в базе
-        given().spec(request).delete("/bear").then().statusCode(200);
+        given().delete("/bear").then().statusCode(200);
 
         //Проверим, что правильно читаем пустую базу
-        Response responseGetAllBears = given().spec(request).get("/bear");
+        Response responseGetAllBears = given().get("/bear");
         responseGetAllBears.then().statusCode(200);
         List<Bear> responseBears = Arrays.asList(new Gson().fromJson(responseGetAllBears.asString(), Bear[].class));
         Assertions.assertEquals(responseBears.size(), 0);
@@ -61,7 +61,7 @@ public class Read extends BaseTest {
         }
 
         //Получим всех медведей в массиве
-        responseGetAllBears = given().spec(request).get("/bear");
+        responseGetAllBears = given().get("/bear");
         responseGetAllBears.then().statusCode(200);
         responseBears = Arrays.asList(new Gson().fromJson(responseGetAllBears.asString(), Bear[].class));
 
@@ -73,15 +73,15 @@ public class Read extends BaseTest {
     @Test
     public void testReadNonexistentBear() {
         //Проверим, что для несуществующих id возвращается успех
-        Response response = given().spec(request).get("/bear/" + "-1");
+        Response response = given().get("/bear/" + "-1");
         response.then().statusCode(400);
         response.then().assertThat().body(equalTo("Invalid id"));
 
-        response = given().spec(request).get("/bear/" + "hello");
+        response = given().get("/bear/" + "hello");
         response.then().statusCode(400);
         response.then().assertThat().body(equalTo("Invalid id"));
 
-        response = given().spec(request).get("/bear/" + "1.1");
+        response = given().get("/bear/" + "1.1");
         response.then().statusCode(400);
         response.then().assertThat().body(equalTo("Invalid id"));
     }
@@ -91,11 +91,11 @@ public class Read extends BaseTest {
         //Сгенерируем медведя, удалим его, и проверим удаление
         Bear bear = generateBears(1).get(0);
 
-        Response responseDeleteAllBears = given().spec(request).delete("/bear/" + bear.getBearId());
+        Response responseDeleteAllBears = given().delete("/bear/" + bear.getBearId());
         responseDeleteAllBears.then().statusCode(200);
         responseDeleteAllBears.then().assertThat().body(equalTo("OK"));
 
-        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
+        Response responseGetBearById = given().get("/bear/" + bear.getBearId());
         responseGetBearById.then().statusCode(200);
         responseGetBearById.then().assertThat().body(equalTo("EMPTY"));
     }
@@ -103,7 +103,7 @@ public class Read extends BaseTest {
     @Test
     public void testReadNullBear() {
         //Прочитаем медведя по id = null
-        Response response = given().spec(request).get("/bear/");
+        Response response = given().get("/bear/");
         response.then().statusCode(404);
         response.then().body(equalTo("Error. Set correct bear_id"));
     }

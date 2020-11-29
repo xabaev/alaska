@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Random;
 
 import static io.restassured.RestAssured.given;
-import static tests.BaseTest.request;
 
 public class Common {
 
@@ -24,7 +23,7 @@ public class Common {
             double randomValue = 0 + 100 * random.nextDouble();
             Bear bear = new Bear(bearType, bearName, randomValue);
 
-            Response response = given().spec(request).body(bear).post("/bear");
+            Response response = given().body(bear).post("/bear");
             String responseBody = response.getBody().asString();
             try {
                 int id = Integer.parseInt(responseBody);
@@ -43,7 +42,7 @@ public class Common {
         double randomValue = 0 + 100 * rand.nextDouble();
         Bear bear = new Bear(type.toString(), bearName, randomValue);
 
-        Response response = given().spec(request).body(bear).post("/bear");
+        Response response = given().body(bear).post("/bear");
         String responseBody = response.getBody().asString();
         try {
             int id = Integer.parseInt(responseBody);

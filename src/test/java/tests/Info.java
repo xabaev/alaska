@@ -20,7 +20,7 @@ public class Info extends BaseTest {
                 "DELETE\t\t\t/bear/:id - delete specific bear\n\n" +
                 "Example of ber json: {\"bear_type\":\"BLACK\",\"bear_name\":\"mikhail\",\"bear_age\":17.5}.\n" +
                 "Available types for bears are: POLAR, BROWN, BLACK and GUMMY.";
-        Response response = given().spec(request).get("/info");
+        Response response = given().get("/info");
         response.then().statusCode(200);
         response.then().body(equalTo(expectedBody));
     }
