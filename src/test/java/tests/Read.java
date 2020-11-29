@@ -32,6 +32,7 @@ public class Read extends BaseTest {
         }
     }
 
+    //Флапающий тест из-за бага с GUMMY
     @Test
     public void testReadAllBears() {
         //Удалим все текущие данные в базе
@@ -46,13 +47,7 @@ public class Read extends BaseTest {
         //Сгенерируем новых медведей, которых будем ожидать в базе
         List<Bear> expectedBears = Common.generateBears(10);
         for (Bear bear : expectedBears) {
-            //Преобразуем переданных GUMMY в UNKNOWN, что бы ожидать их в ответе
-            if (bear.getBearType().equals("GUMMY")) {
-                bear.setBearType("UNKNOWN");
-                bear.setBearAge(0.0);
-                bear.setBearName("EMPTY_NAME");
-            } else
-                bear.setBearName(bear.getBearName().toUpperCase());
+            bear.setBearName(bear.getBearName().toUpperCase());
         }
 
         //Получим всех медведей в массиве
