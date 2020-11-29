@@ -25,15 +25,10 @@ public class Read extends BaseTest {
             Response responseGetBearById = given().get("/bear/" + bear.getBearId());
             responseGetBearById.then().statusCode(200);
 
-            //Если медведь GUMMY, то придет null
-            //Если медведь не GUMMY, передаем пришедшего медведя в модель и сравниваем
-            if (bear.getBearType().equals("GUMMY"))
-                responseGetBearById.then().assertThat().body(equalTo("null"));
-            else {
-                bear.setBearName(bear.getBearName().toUpperCase());
-                Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
-                Assertions.assertEquals(bear, responseBear);
-            }
+            //Здесь будет ошибка при GUMMY-медведях, т.к. там баг
+            bear.setBearName(bear.getBearName().toUpperCase());
+            Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
+            Assertions.assertEquals(bear, responseBear);
         }
     }
 
@@ -71,8 +66,8 @@ public class Read extends BaseTest {
     }
 
     @Test
-    public void testReadNonexistentBear() {
-        //Проверим, что для несуществующих id возвращается успех
+    public void testReadUnsupportedBearId() {
+        //Для !int значения ID - должна кидать ошибка
         Response response = given().get("/bear/" + "-1");
         response.then().statusCode(400);
         response.then().assertThat().body(equalTo("Invalid id"));
@@ -87,8 +82,8 @@ public class Read extends BaseTest {
     }
 
     @Test
-    public void testReadRemovedBear() {
-        //Сгенерируем медведя, удалим его, и проверим удаление
+    public void testReadNonexistentBear() {
+        //Сгенерируем медведя, удалим его, и прочитаем значение в базе
         Bear bear = generateBears(1).get(0);
 
         Response responseDeleteAllBears = given().delete("/bear/" + bear.getBearId());
@@ -98,6 +93,13 @@ public class Read extends BaseTest {
         Response responseGetBearById = given().get("/bear/" + bear.getBearId());
         responseGetBearById.then().statusCode(200);
         responseGetBearById.then().assertThat().body(equalTo("EMPTY"));
+
+        //Прочитаем медведя, id которого нет в базе
+        //Т.к. медведи создаются по порядку, в два раза увеличим порядок сгенерированного медведя.
+        Response responseNonexistentBear = given().get("/bear/" + bear.getBearId() + "00");
+        responseNonexistentBear.then().statusCode(200);
+        responseNonexistentBear.then().assertThat().body(equalTo("EMPTY"));
+
     }
 
     @Test

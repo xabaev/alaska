@@ -42,6 +42,7 @@ public class Update extends BaseTest {
     public void testUpdateJsonOnlyName() {
         //Сгенерируем какого-то медведя
         Bear bear = generateBear(BearType.BROWN);
+
         //Создадим JSON, в котором будет только поле bear_name
         JsonObject jsonName = new JsonObject();
         jsonName.addProperty("bear_name", "test bear NaMe !@#$#%$^&%*^(&)*_(+.,");
@@ -63,8 +64,10 @@ public class Update extends BaseTest {
         Assertions.assertEquals(responseBear.getBearName(), jsonName.get("bear_name").getAsString(), "PUT not updates the name");
     }
 
+    //Тест обновление медведя с типом UNKNOWN
+    //Единственный известный способ получения такого медведя - через создание GUMMY, хоть это и баг
     @Test
-    public void testUpdateGummyBear() {
+    public void testUpdateUnknownBear() {
         //Сгенерируем медведей GUMMY и какого-то !GUMMY
         Bear bearGummy = generateBear(BearType.GUMMY);
         Bear bearNonGummy = generateBear(BearType.BLACK);

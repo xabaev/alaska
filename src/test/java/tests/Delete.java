@@ -45,8 +45,8 @@ public class Delete extends BaseTest {
     }
 
     @Test
-    public void testDeleteNonexistentBear() {
-        //Проверим, что для несуществующих id возвращается успех
+    public void testDeleteUnsupportedBearId() {
+        //Для !int значения ID - должна кидать ошибка
         Response responseDeleteBear = given().delete("/bear/" + "-1");
         responseDeleteBear.then().statusCode(400);
         responseDeleteBear.then().assertThat().body(equalTo("Invalid id"));
@@ -61,7 +61,7 @@ public class Delete extends BaseTest {
     }
 
     @Test
-    public void testDeleteRemovedBear() {
+    public void testDeleteNonexistentBear() {
         //Сгенерируем медведя и дважды удалим его
         Bear bear = generateBears(1).get(0);
 
@@ -72,6 +72,12 @@ public class Delete extends BaseTest {
         Response responseSecondDeletedBear = given().delete("/bear/" + bear.getBearId());
         responseSecondDeletedBear.then().statusCode(200);
         responseSecondDeletedBear.then().assertThat().body(equalTo("OK"));
+
+        //Удалим медведя, id которого нет в базе
+        //Т.к. медведи создаются по порядку, в два раза увеличим порядок сгенерированного медведя.
+        Response responseNonexistentBear = given().delete("/bear/" + bear.getBearId() + "00");
+        responseNonexistentBear.then().statusCode(200);
+        responseNonexistentBear.then().assertThat().body(equalTo("OK"));
     }
 
     @Test
