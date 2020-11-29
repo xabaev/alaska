@@ -87,7 +87,7 @@ public class Create extends BaseTest {
     @MethodSource("unsuccessfulBearProvider")
     public void testCreateUnsuccessfulBear(Bear bear, int code, String expectedBody) {
         //Возьмем медведя из датапровайдера, и создадим его. Ожидаемо будет ошибка
-        Response response = given().body(bear).post("/bear");
+        Response response = given().contentType(ContentType.JSON).body(bear).post("/bear");
         response.then().statusCode(code);
         response.then().assertThat().body(equalTo(expectedBody));
     }
@@ -102,7 +102,7 @@ public class Create extends BaseTest {
         jsonBear.addProperty("bear_name", bear.getBearName());
         jsonBear.addProperty("bear_age", bear.getBearAge());
 
-        Response responseCreateBear = given().body(jsonBear.toString()).post("/bear");
+        Response responseCreateBear = given().contentType(ContentType.JSON).body(jsonBear.toString()).post("/bear");
         responseCreateBear.then().statusCode(code);
         responseCreateBear.then().assertThat().body(equalTo(expectedBody));
     }

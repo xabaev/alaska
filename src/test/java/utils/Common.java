@@ -1,5 +1,6 @@
 package utils;
 
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import model.Bear;
 import model.BearType;
@@ -23,7 +24,7 @@ public class Common {
             double randomValue = 0 + 100 * random.nextDouble();
             Bear bear = new Bear(bearType, bearName, randomValue);
 
-            Response response = given().body(bear).post("/bear");
+            Response response = given().contentType(ContentType.JSON).body(bear).post("/bear");
             String responseBody = response.getBody().asString();
             try {
                 int id = Integer.parseInt(responseBody);
@@ -42,7 +43,7 @@ public class Common {
         double randomValue = 0 + 100 * rand.nextDouble();
         Bear bear = new Bear(type.toString(), bearName, randomValue);
 
-        Response response = given().body(bear).post("/bear");
+        Response response = given().contentType(ContentType.JSON).body(bear).post("/bear");
         String responseBody = response.getBody().asString();
         try {
             int id = Integer.parseInt(responseBody);
