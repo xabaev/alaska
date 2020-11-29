@@ -27,30 +27,30 @@ public class Create extends BaseTest {
                 arguments(new Bear("BLACK", "ЁшкаМатрёшка", (double) 1000000), 200, new Bear("BLACK", "ЁШКАМАТРЁШКА", 0.0)),
                 arguments(new Bear("BLACK", "\u003d", -0.1), 200, new Bear("BLACK", "\u003d", 0.0)),
                 arguments(new Bear("BLACK", " . ", 5.5), 200, new Bear("BLACK", " . ", 5.5)),
-                arguments(new Bear("GUMMY", "BearName", 5.5), 200, new Bear(null, null, null))
+                arguments(new Bear("GUMMY", "BearName", 5.5), 200, new Bear("GUMMY", "BEARNAME", 5.5))
 
         );
     }
 
     static Stream<Arguments> unsuccessfulBearProvider() {
         return Stream.of(
-                //TODO: тут бы я точно не ожидал 404. Или давать возможность создать UNKNOWN, или кидать 400
-                arguments(new Bear("UNKNOWN", "name", (double) 1), 404, "<html><body><h2>404 Not found</h2></body></html>"),
-                //TODO: тут бы я точно не ожидал 500, нужен 400
-                arguments(new Bear("bear", "bearName", (double) 1), 500, "<html><body><h2>500 Internal Server Error</h2></body></html>"),
-                arguments(new Bear(null, "hello", (double) 1), 200, "Error. Pls fill all parameters"),
-                arguments(new Bear("GUMMY", null, (double) 1), 200, "Error. Pls fill all parameters"),
-                arguments(new Bear("GUMMY", "hello", null), 200, "Error. Pls fill all parameters"),
-                arguments(new Bear(null, null, null), 200, "Error. Pls fill all parameters")
+                //Предполагаю, что должен броситься примерно такой ответ. Сейчас 404
+                arguments(new Bear("UNKNOWN", "name", (double) 1), 400, "Error. Set correct bear_type"),
+                arguments(new Bear("bear", "bearName", (double) 1), 400, "Error. Set correct bear_type"),
+                //Сейчас тут code 200, но должно быть 400
+                arguments(new Bear(null, "hello", (double) 1), 400, "Error. Pls fill all parameters"),
+                arguments(new Bear("GUMMY", null, (double) 1), 400, "Error. Pls fill all parameters"),
+                arguments(new Bear("GUMMY", "hello", null), 400, "Error. Pls fill all parameters"),
+                arguments(new Bear(null, null, null), 400, "Error. Pls fill all parameters")
         );
     }
 
     static Stream<Arguments> BearsWithIncorrectParametersTypeProvider() { //Проверим, что при передаче null в JSON будет ошибка
         return Stream.of(
-                //TODO: Во всех случаях я бы ожидал code 400, и body "Error. Pls fill all parameters"
-                arguments(new Bear(null, "BearName", 1.1), 500, "<html><body><h2>500 Internal Server Error</h2></body></html>"),
-                arguments(new Bear("POLAR", null, 1.1), 500, "<html><body><h2>500 Internal Server Error</h2></body></html>"),
-                arguments(new Bear("POLAR", "NAME", null), 500, "<html><body><h2>500 Internal Server Error</h2></body></html>")
+                //Во всех случаях должно быть Error. Pls fill all parameters, и code 400
+                arguments(new Bear(null, "BearName", 1.1), 400, "Error. Pls fill all parameters"),
+                arguments(new Bear("POLAR", null, 1.1), 400, "Error. Pls fill all parameters"),
+                arguments(new Bear("POLAR", "NAME", null), 400, "Error. Pls fill all parameters")
         );
     }
 
@@ -66,11 +66,7 @@ public class Create extends BaseTest {
         int id = -1;
         try {
             id = Integer.parseInt(responseCreateBear.asString());
-            //Если медведь не GUMMY, то запишем его id в ожиданмого медведя
-            //Иначе мы будем сравнивать с пустым медведем, в котором не нужен id
-            //TODO: сделано что бы не ловить баг с GUMMY.
-            if (!bear.getBear_type().equals("GUMMY"))
-                expectedBear.setBear_id(id);
+            expectedBear.setBearId(id);
         } catch (Exception e) {
             Assertions.assertEquals("Response does not contain the database entry number", e.getMessage());
         }
@@ -101,9 +97,9 @@ public class Create extends BaseTest {
         //Возьмем медведя из датапровайдера, и создадим его.
         //Т.к. параметры специфичны (например, null), передаем в виде строк
         JsonObject jsonBear = new JsonObject();
-        jsonBear.addProperty("bear_type", bear.getBear_type());
-        jsonBear.addProperty("bear_name", bear.getBear_name());
-        jsonBear.addProperty("bear_age", bear.getBear_age());
+        jsonBear.addProperty("bear_type", bear.getBearType());
+        jsonBear.addProperty("bear_name", bear.getBearName());
+        jsonBear.addProperty("bear_age", bear.getBearAge());
 
         Response responseCreateBear = given().spec(requestPost).body(jsonBear.toString()).post("/bear");
         responseCreateBear.then().statusCode(code);

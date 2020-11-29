@@ -21,20 +21,20 @@ public class Update extends BaseTest {
         Bear bearGummy = generateBear(BearType.GUMMY);
 
         //Обновим !GUMMY полями от GUMMY
-        Response responseUpdateBear = given().spec(requestPost).body(bearGummy).put("/bear/" + bearNonGummy.getBear_id());
+        Response responseUpdateBear = given().spec(requestPost).body(bearGummy).put("/bear/" + bearNonGummy.getBearId());
         responseUpdateBear.then().statusCode(200);
         responseUpdateBear.then().assertThat().body(equalTo("OK"));
 
         //Проверим, что изменилось только имя медведя.
-        Response responseGetBearById = given().spec(request).get("/bear/" + bearNonGummy.getBear_id());
+        Response responseGetBearById = given().spec(request).get("/bear/" + bearNonGummy.getBearId());
         responseGetBearById.then().statusCode(200);
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
 
         // Т.к. параметры у нас рандомные,можно быть в достаточной уверенности, что они не повторятся
-        Assertions.assertEquals(responseBear.getBear_id(), bearNonGummy.getBear_id(), "PUT updates the id, but only needs the name");
-        Assertions.assertEquals(responseBear.getBear_type(), bearNonGummy.getBear_type(), "PUT updates the type, but only needs the name");
-        Assertions.assertEquals(responseBear.getBear_age(), bearNonGummy.getBear_age(), "PUT updates the age, but only needs the name");
-        Assertions.assertEquals(responseBear.getBear_name(), bearGummy.getBear_name(), "PUT not updates the name");
+        Assertions.assertEquals(responseBear.getBearId(), bearNonGummy.getBearId(), "PUT updates the id, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearType(), bearNonGummy.getBearType(), "PUT updates the type, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearAge(), bearNonGummy.getBearAge(), "PUT updates the age, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearName(), bearGummy.getBearName(), "PUT not updates the name");
     }
 
     @Test
@@ -46,20 +46,20 @@ public class Update extends BaseTest {
         jsonName.addProperty("bear_name", "test bear NaMe !@#$#%$^&%*^(&)*_(+.,");
 
         //Обновим сгенерированного медведя созданным JSONом
-        Response responseUpdateBear = given().spec(requestPost).body(jsonName.toString()).put("/bear/" + bear.getBear_id());
+        Response responseUpdateBear = given().spec(requestPost).body(jsonName.toString()).put("/bear/" + bear.getBearId());
         responseUpdateBear.then().statusCode(200);
         responseUpdateBear.then().assertThat().body(equalTo("OK"));
 
         //Получим обновленного медведя для сравненения
-        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBear_id());
+        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
         responseGetBearById.then().statusCode(200);
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
 
         //Проверим, что изменилось только имя медведя.
-        Assertions.assertEquals(responseBear.getBear_id(), bear.getBear_id(), "PUT updates the id, but only needs the name");
-        Assertions.assertEquals(responseBear.getBear_type(), bear.getBear_type(), "PUT updates the type, but only needs the name");
-        Assertions.assertEquals(responseBear.getBear_age(), bear.getBear_age(), "PUT updates the age, but only needs the name");
-        Assertions.assertEquals(responseBear.getBear_name(), jsonName.get("bear_name").getAsString(), "PUT not updates the name");
+        Assertions.assertEquals(responseBear.getBearId(), bear.getBearId(), "PUT updates the id, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearType(), bear.getBearType(), "PUT updates the type, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearAge(), bear.getBearAge(), "PUT updates the age, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearName(), jsonName.get("bear_name").getAsString(), "PUT not updates the name");
     }
 
     @Test
@@ -69,12 +69,12 @@ public class Update extends BaseTest {
         Bear bearNonGummy = generateBear(BearType.BLACK);
 
         //Обновим GUMMY данными от !GUMMY
-        Response responseUpdateBear = given().spec(requestPost).body(bearNonGummy).put("/bear/" + bearGummy.getBear_id());
+        Response responseUpdateBear = given().spec(requestPost).body(bearNonGummy).put("/bear/" + bearGummy.getBearId());
         responseUpdateBear.then().statusCode(404);
         responseUpdateBear.then().assertThat().body(equalTo("Not found"));
 
         //Проверим, что данные действительно не обновились
-        Response responseGetBearById = given().spec(request).get("/bear/" + bearGummy.getBear_id());
+        Response responseGetBearById = given().spec(request).get("/bear/" + bearGummy.getBearId());
         responseGetBearById.then().statusCode(200);
         responseGetBearById.then().assertThat().body(equalTo("null"));
     }
@@ -83,18 +83,18 @@ public class Update extends BaseTest {
     public void testUpdateWithoutName() {
         //Сгенерируем медведей - один без имени, второй обычный.
         Bear bearWithoutName = generateBear(BearType.POLAR);
-        bearWithoutName.setBear_name(null);
+        bearWithoutName.setBearName(null);
         Bear updatedBear = generateBear(BearType.BLACK);
 
         //Обновим обычного медведя полями медведя без имени
-        Response response = given().spec(requestPost).body(bearWithoutName).put("/bear/" + updatedBear.getBear_id());
+        Response response = given().spec(requestPost).body(bearWithoutName).put("/bear/" + updatedBear.getBearId());
         response.then().statusCode(500);
         response.then().assertThat().body(equalTo("<html><body><h2>500 Internal Server Error</h2></body></html>"));
 
         //Проврим, что действительно не обновили медведя
-        Response responseGetBearById = given().spec(request).get("/bear/" + updatedBear.getBear_id());
+        Response responseGetBearById = given().spec(request).get("/bear/" + updatedBear.getBearId());
         responseGetBearById.then().statusCode(200);
-        updatedBear.setBear_name(updatedBear.getBear_name().toUpperCase());
+        updatedBear.setBearName(updatedBear.getBearName().toUpperCase());
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
         Assertions.assertEquals(responseBear, updatedBear);
     }

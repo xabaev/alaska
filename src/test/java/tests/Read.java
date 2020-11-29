@@ -22,15 +22,15 @@ public class Read extends BaseTest {
         //Сгенерируем пачку медведей и попытаемся проверить всех
         List<Bear> expectedBears = Common.generateBears(10);
         for (Bear bear : expectedBears) {
-            Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBear_id());
+            Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
             responseGetBearById.then().statusCode(200);
 
             //Если медведь GUMMY, то придет null
             //Если медведь не GUMMY, передаем пришедшего медведя в модель и сравниваем
-            if (bear.getBear_type().equals("GUMMY"))
+            if (bear.getBearType().equals("GUMMY"))
                 responseGetBearById.then().assertThat().body(equalTo("null"));
             else {
-                bear.setBear_name(bear.getBear_name().toUpperCase());
+                bear.setBearName(bear.getBearName().toUpperCase());
                 Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
                 Assertions.assertEquals(bear, responseBear);
             }
@@ -52,12 +52,12 @@ public class Read extends BaseTest {
         List<Bear> expectedBears = Common.generateBears(10);
         for (Bear bear : expectedBears) {
             //Преобразуем переданных GUMMY в UNKNOWN, что бы ожидать их в ответе
-            if (bear.getBear_type().equals("GUMMY")) {
-                bear.setBear_type("UNKNOWN");
-                bear.setBear_age(0.0);
-                bear.setBear_name("EMPTY_NAME");
+            if (bear.getBearType().equals("GUMMY")) {
+                bear.setBearType("UNKNOWN");
+                bear.setBearAge(0.0);
+                bear.setBearName("EMPTY_NAME");
             } else
-                bear.setBear_name(bear.getBear_name().toUpperCase());
+                bear.setBearName(bear.getBearName().toUpperCase());
         }
 
         //Получим всех медведей в массиве
@@ -74,16 +74,16 @@ public class Read extends BaseTest {
     public void testReadNonexistentBear() {
         //Проверим, что для несуществующих id возвращается успех
         Response response = given().spec(request).get("/bear/" + "-1");
-        response.then().statusCode(200);
-        response.then().assertThat().body(equalTo("EMPTY"));
+        response.then().statusCode(400);
+        response.then().assertThat().body(equalTo("Invalid id"));
 
         response = given().spec(request).get("/bear/" + "hello");
-        response.then().statusCode(200);
-        response.then().assertThat().body(equalTo("EMPTY"));
+        response.then().statusCode(400);
+        response.then().assertThat().body(equalTo("Invalid id"));
 
         response = given().spec(request).get("/bear/" + "1.1");
-        response.then().statusCode(200);
-        response.then().assertThat().body(equalTo("EMPTY"));
+        response.then().statusCode(400);
+        response.then().assertThat().body(equalTo("Invalid id"));
     }
 
     @Test
@@ -91,11 +91,11 @@ public class Read extends BaseTest {
         //Сгенерируем медведя, удалим его, и проверим удаление
         Bear bear = generateBears(1).get(0);
 
-        Response responseDeleteAllBears = given().spec(request).delete("/bear/" + bear.getBear_id());
+        Response responseDeleteAllBears = given().spec(request).delete("/bear/" + bear.getBearId());
         responseDeleteAllBears.then().statusCode(200);
         responseDeleteAllBears.then().assertThat().body(equalTo("OK"));
 
-        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBear_id());
+        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
         responseGetBearById.then().statusCode(200);
         responseGetBearById.then().assertThat().body(equalTo("EMPTY"));
     }
@@ -105,7 +105,6 @@ public class Read extends BaseTest {
         //Прочитаем медведя по id = null
         Response response = given().spec(request).get("/bear/");
         response.then().statusCode(404);
-        //TODO: Я бы здесь ожидал в body что то вроде "Set bear id", а это считал бы багом
-        response.then().body(equalTo("<html><body><h2>404 Not found</h2></body></html>"));
+        response.then().body(equalTo("Error. Set correct bear_id"));
     }
 }

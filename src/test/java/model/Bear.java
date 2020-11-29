@@ -1,56 +1,67 @@
 package model;
 
+import com.google.gson.annotations.SerializedName;
 import com.sun.istack.Nullable;
 
 import java.util.Objects;
 
 public class Bear {
-    private Integer bear_id;
-    private String bear_type;
-    private String bear_name;
-    private Double bear_age;
+    @SerializedName("bear_id")
+    private Integer bearId;
+
+    @SerializedName("bear_type")
+    private String bearType;
+
+    @SerializedName("bear_name")
+    private String bearName;
+
+    @SerializedName("bear_age")
+    private Double bearAge;
 
     public Bear(@Nullable String type, @Nullable String name, @Nullable Double age) {
-        this.bear_type = type;
-        this.bear_name = name;
-        this.bear_age = age;
+        this.bearType = type;
+        this.bearName = name;
+        this.bearAge = age;
     }
 
-    public Bear(@Nullable Integer bear_id, @Nullable String type, @Nullable String name, @Nullable Double age) {
-        this.bear_id = bear_id;
-        this.bear_type = type;
-        this.bear_name = name;
-        this.bear_age = age;
+    public Bear(@Nullable Integer bearId, @Nullable String type, @Nullable String name, @Nullable Double age) {
+        this.bearId = bearId;
+        this.bearType = type;
+        this.bearName = name;
+        this.bearAge = age;
     }
 
-    public String getBear_type() {
-        return bear_type;
+
+    public String getBearType() {
+        return bearType;
     }
 
-    public void setBear_type(@Nullable String bear_type) {
-        this.bear_type = bear_type;
+    public void setBearType(@Nullable String bearType) {
+        this.bearType = bearType;
     }
 
-    public Double getBear_age() {
-        return bear_age;
+    public Double getBearAge() {
+        return bearAge;
     }
 
-    public void setBear_age(@Nullable Double bear_age) {
-        this.bear_age = bear_age;
+    public void setBearAge(@Nullable Double bearAge) {
+        this.bearAge = bearAge;
     }
 
-    public String getBear_name() {
-        return bear_name;
+    public String getBearName() {
+        return bearName;
     }
 
-    public void setBear_name(@Nullable String bear_name) {
-        this.bear_name = bear_name;
+    public void setBearName(@Nullable String bearName) {
+        this.bearName = bearName;
     }
 
-    public Integer getBear_id() { return bear_id; }
+    public Integer getBearId() {
+        return bearId;
+    }
 
-    public void setBear_id(@Nullable Integer bear_id) {
-        this.bear_id = bear_id;
+    public void setBearId(@Nullable Integer bearId) {
+        this.bearId = bearId;
     }
 
     @Override
@@ -58,18 +69,18 @@ public class Bear {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass() || this.hashCode() != obj.hashCode()) return false;
         Bear myObject = (Bear) obj;
-        return Objects.equals(bear_id, myObject.bear_id) &&
-                Objects.equals(bear_type, myObject.bear_type) &&
-                Objects.equals(bear_name, myObject.bear_name) &&
-                Objects.equals(bear_age, myObject.bear_age);
+        return Objects.equals(bearId, myObject.bearId) &&
+                Objects.equals(bearType, myObject.bearType) &&
+                Objects.equals(bearName, myObject.bearName) &&
+                Objects.equals(bearAge, myObject.bearAge);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(bear_id, bear_type, bear_name, bear_age);
+        return Objects.hash(bearId, bearType, bearName, bearAge);
     }
 
     public String toString() {
-        return String.format("bear_id = %s, bear_type = %s, bear_name = %s, bear_age = %f", bear_id, bear_type, bear_name, bear_age);
+        return String.format("bear_id = %s, bear_type = %s, bear_name = %s, bear_age = %f", bearId, bearType, bearName, bearAge);
     }
 }

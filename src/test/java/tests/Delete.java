@@ -18,12 +18,12 @@ public class Delete extends BaseTest {
         //Сгенерируем одного медведя и проверим, что медведь создался
         Bear bear = generateBears(1).get(0);
 
-        Response responseDeleteBear = given().spec(request).delete("/bear/" + bear.getBear_id());
+        Response responseDeleteBear = given().spec(request).delete("/bear/" + bear.getBearId());
         responseDeleteBear.then().statusCode(200);
         responseDeleteBear.then().assertThat().body(equalTo("OK"));
 
         //Проверим что по GET не найдем удаленного медведя
-        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBear_id());
+        Response responseGetBearById = given().spec(request).get("/bear/" + bear.getBearId());
         responseGetBearById.then().statusCode(200);
         responseGetBearById.then().assertThat().body(equalTo("EMPTY"));
     }
@@ -39,7 +39,7 @@ public class Delete extends BaseTest {
 
         //Для каждого медведя из сгенерированных попробуем достать данные из базы
         for (Bear bear : generatedBears) {
-            Response responseBear = given().spec(request).get("/bear/" + bear.getBear_id());
+            Response responseBear = given().spec(request).get("/bear/" + bear.getBearId());
             responseBear.then().assertThat().body(equalTo("EMPTY"));
         }
     }
@@ -48,16 +48,16 @@ public class Delete extends BaseTest {
     public void testDeleteNonexistentBear() {
         //Проверим, что для несуществующих id возвращается успех
         Response responseDeleteBear = given().spec(request).delete("/bear/" + "-1");
-        responseDeleteBear.then().statusCode(200);
-        responseDeleteBear.then().assertThat().body(equalTo("OK"));
+        responseDeleteBear.then().statusCode(400);
+        responseDeleteBear.then().assertThat().body(equalTo("Invalid id"));
 
         responseDeleteBear = given().spec(request).delete("/bear/" + "hello");
-        responseDeleteBear.then().statusCode(200);
-        responseDeleteBear.then().assertThat().body(equalTo("OK"));
+        responseDeleteBear.then().statusCode(400);
+        responseDeleteBear.then().assertThat().body(equalTo("Invalid id"));
 
         responseDeleteBear = given().spec(request).delete("/bear/" + "1.1");
-        responseDeleteBear.then().statusCode(200);
-        responseDeleteBear.then().assertThat().body(equalTo("OK"));
+        responseDeleteBear.then().statusCode(400);
+        responseDeleteBear.then().assertThat().body(equalTo("Invalid id"));
     }
 
     @Test
@@ -65,11 +65,11 @@ public class Delete extends BaseTest {
         //Сгенерируем медведя и дважды удалим его
         Bear bear = generateBears(1).get(0);
 
-        Response responseDeleteBear = given().spec(request).delete("/bear/" + bear.getBear_id());
+        Response responseDeleteBear = given().spec(request).delete("/bear/" + bear.getBearId());
         responseDeleteBear.then().statusCode(200);
         responseDeleteBear.then().assertThat().body(equalTo("OK"));
 
-        Response responseSecondDeletedBear = given().spec(request).delete("/bear/" + bear.getBear_id());
+        Response responseSecondDeletedBear = given().spec(request).delete("/bear/" + bear.getBearId());
         responseSecondDeletedBear.then().statusCode(200);
         responseSecondDeletedBear.then().assertThat().body(equalTo("OK"));
     }
@@ -79,7 +79,6 @@ public class Delete extends BaseTest {
         //Удалим медведя по id = null
         Response responseDeleteBear = given().spec(request).delete("/bear/");
         responseDeleteBear.then().statusCode(404);
-        //TODO: Я бы здесь ожидал в body что то вроде "Set bear id", а это считал бы багом
-        responseDeleteBear.then().assertThat().body(equalTo("<html><body><h2>404 Not found</h2></body></html>"));
+        responseDeleteBear.then().assertThat().body(equalTo("Error. Set correct bear_id"));
     }
 }
