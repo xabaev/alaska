@@ -29,15 +29,16 @@ public class Update extends BaseTest {
         responseUpdateBear.then().statusCode(200);
         responseUpdateBear.then().assertThat().body(equalTo("OK"));
 
-        //Проверим, что изменилось только имя медведя.
+        //Должно измениться имя и возраст медведя.
+        //Сейчас меняется только имя
         Response responseGetBearById = given().get("/bear/" + bears.get(0).getBearId());
         responseGetBearById.then().statusCode(200);
         Bear responseBear = new Gson().fromJson(responseGetBearById.asString(), Bear.class);
 
         // Т.к. параметры у нас рандомные,можно быть в достаточной уверенности, что они не повторятся
-        Assertions.assertEquals(responseBear.getBearId(), bears.get(0).getBearId(), "PUT updates the id, but only needs the name");
-        Assertions.assertEquals(responseBear.getBearType(), bears.get(0).getBearType(), "PUT updates the type, but only needs the name");
-        Assertions.assertEquals(responseBear.getBearAge(), bears.get(0).getBearAge(), "PUT updates the age, but only needs the name");
+        Assertions.assertEquals(responseBear.getBearId(), bears.get(0).getBearId(), "PUT updates the id, but only needs the name and age");
+        Assertions.assertEquals(responseBear.getBearType(), bears.get(0).getBearType(), "PUT updates the type, but only needs the name and age");
+        Assertions.assertEquals(responseBear.getBearAge(), bears.get(1).getBearAge(), "PUT not updates the age");
         Assertions.assertEquals(responseBear.getBearName(), bears.get(1).getBearName(), "PUT not updates the name");
     }
 

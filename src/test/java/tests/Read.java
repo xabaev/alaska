@@ -85,16 +85,19 @@ public class Read extends BaseTest {
         responseDeleteAllBears.then().statusCode(200);
         responseDeleteAllBears.then().assertThat().body(equalTo("OK"));
 
+        //Если не нашли медведя, то нужен code 404, а не 200
+        //Сейчас code 200
         Response responseGetBearById = given().get("/bear/" + bear.getBearId());
-        responseGetBearById.then().statusCode(200);
+        responseGetBearById.then().statusCode(404);
         responseGetBearById.then().assertThat().body(equalTo("EMPTY"));
 
         //Прочитаем медведя, id которого нет в базе
         //Т.к. медведи создаются по порядку, в два раза увеличим порядок сгенерированного медведя.
+        //Если не нашли медведя, то нужен code 404, а не 200
+        //Сейчас code 200
         Response responseNonexistentBear = given().get("/bear/" + bear.getBearId() + "00");
-        responseNonexistentBear.then().statusCode(200);
+        responseNonexistentBear.then().statusCode(404);
         responseNonexistentBear.then().assertThat().body(equalTo("EMPTY"));
-
     }
 
     @Test
